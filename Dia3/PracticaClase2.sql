@@ -120,7 +120,7 @@ alter table credenciales add column password_sha bytea null;
 
 update credenciales set password_sha = sha512(password::bytea);
 
-select * from credenciales where sha512('fa5bd9087c23f426'::bytea) = password_sha and usuario = 'inside66';
+select * from credenciales where sha512('fa5bd9087c23f426') = password_sha and usuario = 'inside66';
 
 
 select row_number() over(order by id), id, usuario from usuarios;
