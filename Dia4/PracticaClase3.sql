@@ -504,7 +504,34 @@ select users.id, users.first_name, orders.orderdate
 from users
 right join orders on users.id = orders.user_id
 left join order_details od on orders.id = od.order_id;
+left join products p on od.product_id = p.id;
 
 select users.id, users.first_name, orders.id, orders.orderdate
 from users
 left outer join orders on users.id = orders.user_id where orders.id is null;
+
+create view order_detail_view as
+select users.id, users.first_name, orders.orderdate
+from users
+right join orders on users.id = orders.user_id
+left join order_details od on orders.id = od.order_id
+left join products p on od.product_id = p.id;
+
+create or replace procedure total_amount(id_user varchar(20))
+language plpgsql
+as $$
+declare
+	total numeric;
+begin
+	select sum(quantity::numeric * price::numeric)
+	into total 
+	from order_detail_view
+	where user_id = p_id_user;
+
+	raise notice 'el total de $ gastado % es %', p_id_user, total;
+end;
+$$;
+
+call total_amount('00005');
+
+--GRANT
